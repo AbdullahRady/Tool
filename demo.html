@@ -1,0 +1,2088 @@
+<html>
+
+    <head>
+        
+        <title>Demo</title>
+        
+        <!--  Vis stylesheet -->
+        <link href="css/vis.css" rel="stylesheet" type="text/css" />
+        
+        <!--  Expert tool stylesheet -->
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        
+        <!--  Bootstrap stylesheet -->
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
+        
+        <!--  Jquery stylesheet -->
+        <link rel="stylesheet" href="css/jquery-ui.css">
+       
+        
+		<!--  Vis js -->       
+        <script type="text/javascript" src="js/vis.js"></script>
+        
+        <!--  Drag triples js --> 
+        <script type="text/javascript" src="js/drag.js"></script>
+        
+        <!--  Jquery js --> 
+		<script src="js/jquery-1.12.4.js"></script>
+        <script src="js/jquery-ui.js"></script> 
+        
+		<!--  Bootstrap js --> 
+    	<script src="js/bootstrap.min.js"></script>
+   		
+        <!--  Tabs js --> 
+    	<script src="js/tabs.js"></script>
+        
+        <!--  JSON data 
+        <script type="text/javascript" src="jsonmin.json"></script> 
+        
+        <!-- Google Maps API -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj4QJtHSoRFaCg0HubO3z6TzL6aKRw1_A" 
+		type="text/javascript"></script>
+        
+        <!--  Initiate js functions on load -->
+		<script>
+			function init()
+			{
+				//Drag not working with this version, check functions' scope
+				drag();
+			}
+		</script>    
+
+
+          
+    </head>
+    
+    
+    <body onLoad="init()">
+    	
+        
+        <!-- Container -->
+        <div id="container">
+    	    
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div id="logo">
+                	<!-- <img id="logo-image" src="img/logo_s.png"/> -->
+                	<h3 id="logo-text"><span class="bigh">L</span>inked<span class="bigh">D</span>ata</h3>
+                </div>
+                
+                <!--  Triples Table -->
+                <div id="triples">
+                	<table align="center" cellspacing="5" cellpadding="5" id="tbltriples">
+                    	<thead>
+                            <tr>
+                                <th>FROM</th><th>TO</th><th>LABEL<input style="float:right; margin-right: 2px;" id="edge_add_btn" name="" type="button" class="btnadd-2" data-toggle="modal" data-target="#edgeModalAdd" data-id="" data-action="add"></th>
+                            </tr>
+                    	</thead>
+                        <tbody id="triples-content">
+                            
+                        </tbody>    
+                    </table>
+                </div>
+                <!--  Triples Table End -->
+                
+				
+                <!--  Node Details Block -->
+				<div id="block-side-1">
+                     
+                    <!--  Node Options -->
+                    <div id="node_options">   
+                        
+                        <!--  Block Title -->
+                        <span class="block-label">NODE</span>
+                        <!--  Block Title End -->
+                        
+                        <!--  Add Node -->
+                        <span id="node_add">
+                            <input id="node_add_btn" name="" type="button" class="btnadd-2" data-toggle="modal" data-target="#nodeModal" data-id="" data-action="add">                    
+                        </span>
+                        <!--  Add Node End -->
+                        
+                        <!--  Edit Node -->
+                        <span id="node_edit">
+                            <input id="node_edit_btn" name="" type="button" class="btnedit-2" data-toggle="modal" data-target="#nodeModal" data-id="" data-action="update">                    
+                        </span>
+                        <!--  Edit Node End -->
+                        
+                        <!--  Delete Node -->
+                        <span id="node_delete">
+                            <button id="node_delete_btn" class="btndelete-2" onClick="removeNode()"></button>                   			
+                        </span>
+                        <!--  Delete Node End -->
+                        
+                    </div>
+                    <!--  Node Options End -->
+                                    
+                	<!--  Node Details -->
+                    <div id="node_details">                        
+                        
+                        <span id="node_label"><h4>&nbsp;</h4></span>
+                        <span id="node_info">&nbsp;</span>
+                        
+                    </div>
+                    <!--  Node Details End -->
+                    
+				</div>                    
+                <!--  Node Details Block End --> 
+                
+                <!-- Note: retrieve old buttons style and replace triples options with save and load buttons -->
+                
+                <!--  Triples Options 
+                <div id="triplesoptions">
+                    <input name="" value="Add Node" type="button" class="btnadd" style="float:left" data-toggle="modal" data-target="#nodeModal" data-id="" data-action="add">
+                    <input name="" value="Add Edge" type="button" class="btnadd" style="float:right" data-toggle="modal" data-target="#edgeModalAdd" data-id="" data-action="add">
+                </div>
+                <!--  Triples Options End -->                
+                
+            </div>
+            <!-- Sidebar End -->
+                    
+            
+            <!-- Topbar -->
+            <div id="topbar">
+            	
+                <a href="#"> <img style=" float: right; margin: 20px 10px 0px 5px; width: 10px; height: 10px;" src="img/arrow_down.png"> </a>               
+            	<a href="#"> <img style=" float: right; margin: 5px; width: 32px; height: 32px;" src="img/avatar.png"> </a>
+            	<a href="#"> <img style=" float: right; margin: 16px 10px 0px 5px;" src="img/collaborate.png"> </a>
+                
+            </div>
+            <!-- Topbar End -->
+            
+            
+            <!-- Footer -->
+            <div id="footer">
+                <div id="footer_text">
+                    demo &copy; 2017
+                </div>
+            </div>
+            <!-- Footer End -->
+
+            <!-- Content -->
+            <div id="content">
+            
+                <!-- Tabs Dialog -->
+                <div id="dialog" title="Tab data">
+                  <form>
+                    <fieldset class="ui-helper-reset">
+                      <label for="tab_title">Title</label>
+                      <input type="text" name="tab_title" id="tab_title" value="Tab Title" class="ui-widget-content ui-corner-all">
+                      <label style="display:none" for="tab_content">Content</label>
+                      <textarea style="display:none" name="tab_content" id="tab_content" class="ui-widget-content ui-corner-all">&nbsp;</textarea>
+                    </fieldset>
+                  </form>
+                </div>
+                <!-- Tabs Dialog End -->
+    
+    
+                <!-- Tabs -->
+                <div id="tabs">
+                    <ul>
+                        <li><a href="#tabs-1">General</a> <span class="ui-icon ui-icon-close" role="presentation">Remove Tab</span></li>
+                        
+                        <button style="float: right; margin: 10px 10px 0px 10px;" id="add_tab" class="btnadd-2"></button>
+                    </ul>
+                    <div id="tabs-1">
+                        
+                        <!-- Network Keywords -->
+                        <div class="keywords">
+                            <label>Keywords: </label>
+                            <input id="keywords-1" type="text" size="50"/>
+                        </div>
+                        <!-- Network Keywords End -->
+                        
+                        <!-- Network -->
+                        <div id="network" class="network">&nbsp;
+                        </div>
+                        <!-- Network End -->
+                        
+                    </div>
+                </div>            
+                <!-- Tabs End -->
+                
+                            
+                
+                
+            
+                <!-- Save button -->
+                <input id="btn-save" class="btn" type="button" value="Save" onClick="saveToJSON()">	 
+                <!-- Save button End --> 
+                
+                <!-- Load button -->
+                <input id="btn-load" class="btn" type="button" value="Load" onClick="">
+                <input type="file" id="read-json" accept="application/json" onChange="loadJSON();" style="display:none">	 
+                <!-- Load button End -->           
+            
+            </div>
+            <!-- Content End -->           
+    
+		</div>
+        <!-- Container End -->
+
+		<!-- Node Modal -->
+        <div class="modal fade" id="nodeModal" tabindex="-1" role="dialog" aria-labelledby="nodeModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="nodeModalLabel"></h4>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="frm-node-label" class="control-label">Label</label>
+                    <input type="text" class="form-control" id="frm-node-label" onfocusout="displayTimeline(this.id); displayMap(this.id)" placeholder="Node Label">
+                  </div>
+                  <div class="form-group">
+                    <label for="frm-node-info" class="control-label">Information</label>
+                    <textarea class="form-control" id="frm-node-info" placeholder="Node Information"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="frm-node-question-type" class="control-label">Question type</label>
+                    <select class="form-control" id="frm-node-question-type" onChange="displayQuestionFields()">
+                      <option value="0">None</option>
+                      <option value="1">MCQ</option>
+                      <option value="2">Timeline</option>
+                      <option value="3">Map</option>
+                    </select>
+                  </div>
+                </form>
+
+
+                <form id="node-question-form" style="display:none">
+                  <div class="form-group">
+                    <label for="frm-node-question" class="control-label">Question</label>
+                    <input type="text" class="form-control" id="frm-node-question" placeholder="Node Question">
+                  </div>
+                  <div class="form-group">
+                    <label for="frm-node-date" class="control-label" id="frm-node-date-label"></label>
+                    <input type="date" class="form-control" id="frm-node-date" onfocusout="displayTimeline(this.id)" placeholder="Date">
+                    <label for="frm-node-latitude" class="control-label" id="frm-node-latitude-label"></label>
+                    <input type="text" class="form-control" id="frm-node-latitude" onfocusout="displayMap(this.id)" placeholder="Latitude">
+                    <label for="frm-node-longitude" class="control-label" id="frm-node-longitude-label"></label>
+                    <input type="text" class="form-control" id="frm-node-longitude" onfocusout="displayMap(this.id)" placeholder="Longitude">
+                  </div>
+                </form>              
+
+
+                <!-- Node Question Options -->
+                <form id="frm-node-options" style="display:none">
+                  <div class="form-group">
+                    <label for="frm-node-options" class="control-label">Options</label>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-option-1" placeholder="Option">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-option-2" placeholder="Option">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-option-3" placeholder="Option">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                </form>
+                <!-- Node Question Options -->                  
+
+                <!-- Node Question Timeline Options -->
+                <form id="frm-node-timeline">
+                  <div class="form-group">
+                    <label for="frm-node-options" class="control-label">Options</label>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-timeline-1" onfocusout="displayTimeline(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="date" class="form-control" id="frm-node-timeline-date-1" onfocusout="displayTimeline(this.id)" placeholder="Date">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-timeline-2" onfocusout="displayTimeline(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="date" class="form-control" id="frm-node-timeline-date-2" onfocusout="displayTimeline(this.id)" placeholder="Date">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-timeline-3" onfocusout="displayTimeline(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="date" class="form-control" id="frm-node-timeline-date-3" onfocusout="displayTimeline(this.id)" placeholder="Date">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <!-- Node Question Timeline -->
+                  <div id="timeline"></div>
+                  <!-- Node Question Timeline End -->
+                </form>
+                <!-- Node Question Timeline Options End -->
+                
+                <!-- Node Question Map Options -->
+                <form id="frm-node-map">
+                  <div class="form-group">
+                    <label for="frm-node-options" class="control-label">Options</label>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-map-1" onfocusout="displayMap(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-latitude-1" onfocusout="displayMap(this.id)" placeholder="Latitude">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-longitude-1" onfocusout="displayMap(this.id)" placeholder="Longitude">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-map-2" onfocusout="displayMap(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-latitude-2" onfocusout="displayMap(this.id)" placeholder="Latitude">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-longitude-2" onfocusout="displayMap(this.id)" placeholder="Longitude">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="frm-node-map-3" onfocusout="displayMap(this.id)" placeholder="Option">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-latitude-3" onfocusout="displayMap(this.id)" placeholder="Latitude">
+                    <span class="input-group-btn"></span>
+                    <input type="text" class="form-control" id="frm-node-map-longitude-3" onfocusout="displayMap(this.id)" placeholder="Longitude">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="button">Lock</button>
+                    </span>
+                  </div>
+                  <br>
+                  <!-- Node Question Map -->
+                  <div id="map"></div>
+                  <!-- Node Question Map End -->
+                </form>
+                <!-- Node Question Map Options End -->
+
+
+                                                                                      
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-info" style="display:none">Recommend Answers</button>
+                <button type="button" class="btn btn-primary" id="nodeModalAction" data-dismiss="modal" onClick="">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+		<!-- Node Modal End -->
+		        
+        
+		<!-- Add Edge Modal -->
+        <div class="modal fade" id="edgeModalAdd" tabindex="-1" role="dialog" aria-labelledby="edgeModalAddLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="edgeModalAddLabel">Add Edge</h4>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="frm-node-from" class="control-label">From</label>
+                    <select class="form-control" id="frm-node-from">
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="frm-node-to" class="control-label">To</label>
+                    <select class="form-control" id="frm-node-to">
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="frm-edge-label" class="control-label">Label</label>
+                    <input type="text" class="form-control" id="frm-edge-label" placeholder="Label">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onClick="addEdge()">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+		<!-- Add Edge Modal End -->   
+                                 
+                            
+    </body>
+
+</html>
+
+<script>
+
+	var reflectiveTopics, nodes, edges, questions, network, keywords;
+	
+	var jsonObj, reflectiveTopicsSet, nodesSet, edgesSet, questionsSet;
+	
+	var reflectiveTopicsLength, nodesLength, edgesLength, questionsLength, reflectiveTopicsIds, nodesIds, edgesIds, questionsIds;
+	
+	var map, mapDiv, markers = [];
+	
+	//Global variables for click function
+	var nodeSet, nodeId, nodeLabel, nodeInfo, nodeQuestion, questionId, questionSet, questionLabel, questionType, questionAnswer, questionDate, questionLatitude, questionLongitude, o1Novice, o2Novice, o3Novice, oaDate, o1NoviceDate, o2NoviceDate, o3NoviceDate, oaLatitude, o1NoviceLatitude, o2NoviceLatitude, o3NoviceLatitude, oaLongitude, o1NoviceLongitude, o2NoviceLongitude, o3NoviceLongitude ;
+	
+	getData();
+
+	function getData()
+	{		
+		var url = 'https://api.myjson.com/bins/1eawmh';
+		var ourRequest = new XMLHttpRequest();
+		ourRequest.open('GET', url );	
+		
+		ourRequest.onload = function()
+		{
+			if (ourRequest.status >= 200 && ourRequest.status <= 400)
+			{			
+				var jsonData = ourRequest.responseText;
+				
+				setData(jsonData);
+			}
+			else
+			{
+				alert("Unable to retrieve data from server");
+			}
+			
+			ourRequest.onerror = function()
+			{
+				alert("Connection Error");
+				
+			};
+			
+		};
+		
+		ourRequest.send();
+	}
+
+
+	function setData(jsonData)
+	{	
+		
+		jsonObj = JSON.parse(jsonData);
+		
+		
+		var data = new vis.DataSet();
+		
+		data.add(jsonObj);
+		
+		var dataJSON = JSON.stringify(data.get(), null, 4);
+		//alert(dataJSON);
+		
+		
+		reflectiveTopicsSet = jsonObj[0]['reflectiveTopics'];
+		
+		// create an array with reflective topics
+		reflectiveTopics = new vis.DataSet();
+		
+		//Parse data from reflective topics json file and push them to reflectiveTopics variable
+		reflectiveTopics.add(reflectiveTopicsSet);
+		
+		var reflectiveTopicsJSON = JSON.stringify(reflectiveTopics.get(), null, 4);
+		//alert(reflectiveTopicsJSON);
+		
+		
+		displayReflectiveTopicsContent(reflectiveTopicsSet[0]);
+		
+		function displayReflectiveTopicsContent(reflectiveTopic)
+		{
+			
+			reflectiveTopicId = reflectiveTopic.id;
+		
+			nodesSet = reflectiveTopic.nodesData;
+			
+			edgesSet = reflectiveTopic.edgesData;
+			
+			questionsSet = reflectiveTopic.questionsData;		
+			
+			// create an array with nodes
+			nodes = new vis.DataSet();
+			
+			//Parse data from nodes json file and push them to nodes variable
+			nodes.add(nodesSet);
+				
+			var nodesJSON = JSON.stringify(nodes.get(), null, 4);
+			//alert(nodesJSON);
+				
+			// create an array with edges
+			edges = new vis.DataSet();
+			
+			//Parse data from edges json file and push them to edges variable
+			edges.add(edgesSet);
+			
+			var edgesJSON = JSON.stringify(edges.get(), null, 4);
+			//alert(edgesJSON);
+			
+			// create an array with questions
+			questions = new vis.DataSet();
+			
+			//Parse data from nodes json file and push them to nodes variable
+			questions.add(questionsSet);
+			
+			var questionsJSON = JSON.stringify(questions.get(), null, 4);
+			//alert(questionsJSON);	
+			
+			createNetwork(reflectiveTopicId, nodes, edges, questions);	
+			
+			displayKeywords();
+			
+			displayTriples(nodes, edges);
+			
+			displayEdgeNodes();
+	
+		}
+		
+	}
+	
+	
+	function createNetwork(reflectiveTopicId, nodes, edges, questions)
+	{
+		var networkDiv = 'network';
+		// create a network
+		var networkContainer = document.getElementById(networkDiv);
+		var networkData = 
+			{
+				nodes: nodes,
+				edges: edges
+			};
+		var networkOptions = {};
+		network = new vis.Network(networkContainer, networkData, networkOptions);
+		
+		
+		nodesLength = nodes.length;
+		edgesLength = edges.length; 
+		questionsLength = questions.length;
+		
+		//Action when a node is selected
+		network.on("click", function (params)
+		{
+			params.event = "click";
+			var myJSON = JSON.stringify(params, null, 4);
+			
+			var nodeSelected = params.nodes;
+			var edgesSelected = params.edges;
+			
+			var DOMx = params['pointer']['DOM']['x'];		
+			var DOMy = params['pointer']['DOM']['y'];
+			var canvasx = params['pointer']['canvas']['x'];
+			var canvasy = params['pointer']['canvas']['y'];
+			
+			nodeId = parseInt(nodeSelected);
+			
+			nodeSet = nodes.get(nodeId);
+			
+			nodeLabel = nodeSet.label;
+			
+			nodeInfo = nodeSet.info;
+			
+			nodeQuestion = nodeSet.question;
+			
+			
+			questionSet = questions.get
+			({
+				filter: 
+						function (item) 
+						{
+							return item.nodeId == nodeId;
+						}
+			});
+			
+			if(questionSet[0] != null && questionSet[0] != undefined)
+			{
+				questionId = questionSet[0].id;
+				questionType = questionSet[0].questionType;
+				questionLabel = questionSet[0].label;
+				questionAnswer = questionSet[0].answer;
+				questionDate = questionSet[0].start;
+				questionLatitude = questionSet[0].latitude;
+				questionLongitude = questionSet[0].longitude;
+				questionImage = questionSet[0].image;
+				questionTip = questionSet[0].tip;
+				
+				o1Novice = questionSet[0]['answers'][0]['options'][0]['content'];
+				o2Novice = questionSet[0]['answers'][0]['options'][1]['content'];
+				o3Novice = questionSet[0]['answers'][0]['options'][2]['content'];
+				
+				o1Expert = questionSet[0]['answers'][1]['options'][0]['content'];
+				o2Expert = questionSet[0]['answers'][1]['options'][1]['content'];
+				o3Expert = questionSet[0]['answers'][1]['options'][2]['content'];	
+
+				o1NoviceDate = questionSet[0]['answers'][0]['options'][0]['start'];
+				o2NoviceDate = questionSet[0]['answers'][0]['options'][1]['start'];
+				o3NoviceDate = questionSet[0]['answers'][0]['options'][2]['start'];	
+
+				o1ExpertDate = questionSet[0]['answers'][1]['options'][0]['start'];
+				o2ExpertDate = questionSet[0]['answers'][1]['options'][1]['start'];
+				o3ExpertDate = questionSet[0]['answers'][1]['options'][2]['start'];
+				
+					
+				o1NoviceLatitude = questionSet[0]['answers'][0]['options'][0]['latitude'];
+				o1NoviceLongitude = questionSet[0]['answers'][0]['options'][0]['longitude'];
+				
+				o2NoviceLatitude = questionSet[0]['answers'][0]['options'][1]['latitude'];;
+				o2NoviceLongitude = questionSet[0]['answers'][0]['options'][1]['longitude'];
+				
+				o3NoviceLatitude = questionSet[0]['answers'][0]['options'][2]['latitude'];;
+				o3NoviceLongitude = questionSet[0]['answers'][0]['options'][2]['longitude'];				
+											
+			}
+			else
+			{
+				questionType = 0;
+			}
+			
+			displayNodeDetails();
+			
+			//displayQuestionDetails();	
+			//displayQuestionFields();				
+			
+		});
+		
+		network.on("doubleClick", function (params) 
+		{
+        	$('#nodeModal').modal('show');
+    	});
+				
+	}
+	
+	function displayKeywords()
+	{
+		keywordsSet = jsonObj[0]['reflectiveTopics'][0]['keywords'];
+				
+		var keywordsData = keywordsSet.join();
+		
+		document.getElementById("keywords-1").value = keywordsData;
+	}
+	
+	//Display triples in a table
+	function displayTriples(nodes, edges)						//This function needs to be updated to update displayed triples
+	{
+		nodesLength = nodes.length;
+		edgesLength = edges.length;
+				
+		edgesIds = edges.getIds();
+		nodesIds = nodes.getIds();
+		
+		$('tbody#triples-content').empty();
+		
+		var tr;
+		
+		//Display triples in table					
+		for (var i = 0; i < edgesLength; i++)
+		{
+			var tripleEdgeId = edgesIds[i];		
+			
+			var tripleEdgeSet = edges.get(tripleEdgeId);
+				
+			var tripleEdgeFrom = tripleEdgeSet.from;
+				
+			var tripleEdgeTo = tripleEdgeSet.to;
+			
+			var tripleEdgeLabel = tripleEdgeSet.label;
+						
+				
+			for (var j = 0; j < nodesLength; j++) 
+			{
+				
+				var tripleNodeId = nodesIds[j];		
+					
+				var tripleNodeSet = nodes.get(tripleNodeId);
+				
+				if(tripleNodeId == tripleEdgeFrom)
+					tripleNodeFromLabel = tripleNodeSet.label;
+				
+				if(tripleNodeId == tripleEdgeTo)
+					tripleNodeToLabel = tripleNodeSet.label;	
+			}
+			
+			tr = $('<tr id=" tbltriplesrow ' + [i] + ' "/>');
+			tr.append('<td class="draggable">' + tripleNodeFromLabel + '</td>');
+			tr.append('<td class="draggable">' + tripleNodeToLabel + '</td>');
+			tr.append('<td class="draggable">' + tripleEdgeLabel + '</td>');
+			
+			$('table#tbltriples').append(tr);
+		}
+				
+	}
+	
+	
+	//Display nodes labels in select menus when adding an edge	
+	function displayEdgeNodes()
+	{
+		//Add a condition when updating an edge that it should has value to be added
+		
+		$("#frm-node-from").empty();
+		$("#frm-node-from").append('<option value="">-- Select Node --</option>');
+		
+		$("#frm-node-to").empty();
+		$("#frm-node-to").append('<option value="">-- Select Node --</option>');	
+		
+		//Retrieve nodes ids
+		nodesIds = nodes.getIds();
+		
+		//Set nodes values in edges form				
+		for (var s = 0; s < nodesIds.length; s++)
+		{
+			
+			var edgeNodeId = nodesIds[s];
+			
+			var edgeNodeSet = nodes.get(edgeNodeId);
+			
+			var edgeNodeLabel = edgeNodeSet.label;
+			
+			var edgeNodeInfo = edgeNodeSet.info;
+					
+			$("#frm-node-from").append('<option value="'+edgeNodeId+'">'+edgeNodeLabel+'</option>');
+			$("#frm-node-to").append('<option value="'+edgeNodeId+'">'+edgeNodeLabel+'</option>');		
+			
+		}
+
+	}
+	
+
+	//Display node Info
+	function displayNodeDetails()
+	{
+		
+		document.getElementById('node_label').innerHTML = '<h4>' + nodeLabel + '</h4>';		
+		document.getElementById('node_info').innerHTML = '' + nodeInfo + '';			
+		
+		document.getElementById('node_edit').style.display = 'inline';
+		document.getElementById('node_delete').style.display = 'inline';
+				
+	}
+	
+	function displayQuestionFields()
+	{
+		questionType = document.getElementById('frm-node-question-type').value;	
+		
+		
+		if(questionType == 1)
+		{
+			//Node Date
+			document.getElementById('frm-node-date-label').style.display = 'none';
+			document.getElementById('frm-node-date').style.display = 'none';
+			
+			//Node Latitude
+			document.getElementById('frm-node-latitude-label').style.display = 'none';
+			document.getElementById('frm-node-latitude').style.display = 'none';
+			
+			//Node Longitude
+			document.getElementById('frm-node-longitude-label').style.display = 'none';
+			document.getElementById('frm-node-longitude').style.display = 'none';
+			
+			//Question Form
+			document.getElementById('node-question-form').style.display = 'block';
+			
+			//MCQ Options
+			document.getElementById('frm-node-options').style.display = 'inline';
+			
+			//Timeline
+			document.getElementById('frm-node-timeline').style.display = 'none';
+			
+			//Map
+			document.getElementById('frm-node-map').style.display = 'none';
+			
+		}
+		else if(questionType == 2)
+		{
+			
+			//Node Date
+			document.getElementById('frm-node-date-label').style.display = 'block';
+			document.getElementById('frm-node-date').style.display = 'inline';
+			
+			//Node Latitude
+			document.getElementById('frm-node-latitude-label').style.display = 'none';
+			document.getElementById('frm-node-latitude').style.display = 'none';
+			
+			//Node Longitude
+			document.getElementById('frm-node-longitude-label').style.display = 'none';
+			document.getElementById('frm-node-longitude').style.display = 'none';
+			
+			//Question Form
+			document.getElementById('node-question-form').style.display = 'block';
+			
+			//MCQ Options
+			document.getElementById('frm-node-options').style.display = 'none';
+			
+			//Timeline
+			document.getElementById('frm-node-timeline').style.display = 'inline';
+			
+			//Map
+			document.getElementById('frm-node-map').style.display = 'none';
+			
+			displayTimeline(null);
+			
+		}
+		else if(questionType == 3)
+		{
+			//Node Date			
+			document.getElementById('frm-node-date-label').style.display = 'none';
+			document.getElementById('frm-node-date').style.display = 'none';
+			
+			//Node Latitude
+			document.getElementById('frm-node-latitude-label').style.display = 'block';
+			document.getElementById('frm-node-latitude').style.display = 'inline';
+			
+			//Node Longitude
+			document.getElementById('frm-node-longitude-label').style.display = 'block';
+			document.getElementById('frm-node-longitude').style.display = 'inline';
+			
+			//Question Form
+			document.getElementById('node-question-form').style.display = 'block';
+			
+			//MCQ Options
+			document.getElementById('frm-node-options').style.display = 'none';
+			
+			//Timeline
+			document.getElementById('frm-node-timeline').style.display = 'none';
+			
+			//Map
+			document.getElementById('frm-node-map').style.display = 'inline';
+						
+			
+			
+			displayMap(null);
+			
+		}
+		else
+		{
+			document.getElementById('frm-node-date-label').style.display = 'none';
+			document.getElementById('frm-node-date').style.display = 'none';
+			
+			document.getElementById('frm-node-latitude-label').style.display = 'none';
+			document.getElementById('frm-node-latitude').style.display = 'none';
+			
+			document.getElementById('frm-node-longitude-label').style.display = 'none';
+			document.getElementById('frm-node-longitude').style.display = 'none';
+			
+			//Question Form
+			document.getElementById('node-question-form').style.display = 'none';
+			
+			document.getElementById('frm-node-options').style.display = 'none';
+			document.getElementById('frm-node-timeline').style.display = 'none';
+			document.getElementById('frm-node-map').style.display = 'none';
+			
+		}
+		
+	}
+	
+	//Display question & appropriate fields in Question modal
+	function displayQuestionDetails()
+	{
+	}
+	
+
+	function displayTimeline(e)
+	{
+		nodeLabel = document.getElementById('frm-node-label').value;
+		
+		//if(e != null)
+		{
+			questionDate = document.getElementById('frm-node-date').value; 
+			
+			o1Novice = document.getElementById('frm-node-timeline-1').value;
+			o2Novice = document.getElementById('frm-node-timeline-2').value;
+			o3Novice = document.getElementById('frm-node-timeline-3').value;
+			
+			o1Expert = document.getElementById('frm-node-timeline-1').value;
+			o2Expert = document.getElementById('frm-node-timeline-2').value;
+			o3Expert = document.getElementById('frm-node-timeline-3').value;
+			
+			
+			o1NoviceDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2NoviceDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3NoviceDate = document.getElementById('frm-node-timeline-date-3').value;	
+	
+			o1ExpertDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2ExpertDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3ExpertDate = document.getElementById('frm-node-timeline-date-3').value;
+		}
+		
+		var timelineDiv = 'timeline';
+		
+		document.getElementById(timelineDiv).innerHTML = "";
+		
+		// DOM element where the Timeline will be attached
+		var timelineContainer = document.getElementById(timelineDiv);
+		
+		// Create a DataSet (allows two way data-binding)
+		var timelineData = new vis.DataSet();
+		
+
+		if(nodeLabel != "" && questionDate != "")
+		{
+			addTimelineItem(1, nodeLabel, questionDate)	
+		}		
+		if(o1Novice != "" && o1NoviceDate != "")
+		{
+			addTimelineItem(2, o1Novice, o1NoviceDate)	
+		}		
+		if(o2Novice != "" && o2NoviceDate != "")
+		{
+			addTimelineItem(3, o2Novice, o2NoviceDate)
+		}		
+		if(o3Novice != "" && o3NoviceDate != "")
+		{
+			addTimelineItem(4, o3Novice, o3NoviceDate)
+		}
+		
+		function addTimelineItem(tId, tContent, tNoviceDate)
+		{
+			timelineData.add
+			([
+				{id: tId, content: tContent, start: tNoviceDate}
+			]);
+		}
+		
+		
+		// Configuration for the Timeline
+		var timelineOptions = {};
+		
+		// Create a Timeline
+		var timeline = new vis.Timeline(timelineContainer, timelineData, timelineOptions);				
+		
+	}	
+	
+	function displayMap(e)
+	{
+		
+		//if(e != null)
+		{
+			questionLatitude = document.getElementById('frm-node-latitude').value; 
+			questionLongitude = document.getElementById('frm-node-longitude').value; 
+			
+			o1Novice = document.getElementById('frm-node-map-1').value;
+			o2Novice = document.getElementById('frm-node-map-2').value;
+			o3Novice = document.getElementById('frm-node-map-3').value;
+			
+			o1Expert = document.getElementById('frm-node-map-1').value;
+			o2Expert = document.getElementById('frm-node-map-2').value;
+			o3Expert = document.getElementById('frm-node-map-3').value;
+			
+			
+			o1NoviceLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1NoviceLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2NoviceLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2NoviceLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3NoviceLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3NoviceLongitude = document.getElementById('frm-node-map-longitude-3').value;		
+				
+			o1ExpertLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1ExpertLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2ExpertLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2ExpertLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3ExpertLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3ExpertLongitude = document.getElementById('frm-node-map-longitude-3').value;	
+			
+		}
+		
+		nodeLabel = document.getElementById('frm-node-label').value; 
+		
+		function removeMarkers()
+		{
+			for(var i=0; i<markers.length; i++)
+			{
+				markers[i].setMap(null);
+			}
+		}
+		
+		
+				
+		removeMarkers();
+		
+		var locations = [];
+				
+		if(nodeLabel != "" && questionLatitude != "" && questionLongitude != "")
+		{
+			addMapItem(nodeLabel, questionLatitude, questionLongitude)	
+		}
+		if(o1Novice != "" && o1NoviceLatitude != "" && o1NoviceLongitude != "")
+		{
+			addMapItem(o1Novice, o1NoviceLatitude, o1NoviceLongitude)	
+		}
+		if(o2Novice != "" && o2NoviceLatitude != "" && o2NoviceLongitude != "")
+		{
+			addMapItem(o2Novice, o2NoviceLatitude, o2NoviceLongitude)	
+		}
+		if(o3Novice != "" && o3NoviceLatitude != "" && o3NoviceLongitude != "")
+		{
+			addMapItem(o3Novice, o3NoviceLatitude, o3NoviceLongitude)	
+		}
+						
+		
+		function addMapItem(mContent, mNoviceLatitude, mNoviceLongitude)
+		{
+			locations.push
+			(
+				[mContent, mNoviceLatitude, mNoviceLongitude]
+			);
+		}
+		
+		/*
+		var bound = new google.maps.LatLngBounds();
+
+		for (i = 0; i < locations.length; i++) 
+		{
+			bound.extend( new google.maps.LatLng(locations[i][2], locations[i][3]) );
+		}
+		
+		console.log( bound.getCenter() );	
+		*/
+		
+		mapDiv = 'map';
+		
+		//Call once outside the function to avoid refreshing	
+		document.getElementById(mapDiv).innerHTML = "";
+		
+		map = new google.maps.Map(document.getElementById(mapDiv), 
+		{
+		  zoom: 3,
+		  center: new google.maps.LatLng(58.525961, -20.255119),
+		  mapTypeId: google.maps.MapTypeId.ROADMAP
+		});
+		
+		//Readjust the map's center point to the node's latitude and longitude
+		if(nodeLabel != "" && questionLatitude != "" && questionLongitude != "")
+		{	
+			var panPoint = new google.maps.LatLng(questionLatitude, questionLongitude); 
+		
+			map.panTo(panPoint);
+		}
+		
+		
+				
+		var infowindow = new google.maps.InfoWindow();
+		
+		var marker, i;
+		
+		for (i = 0; i < locations.length; i++) 
+		{  
+		  marker = new google.maps.Marker
+		  ({
+			position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+			map: map
+		  });
+		  
+		  markers.push(marker);
+		
+		  google.maps.event.addListener(marker, 'click', (function(marker, i) 
+		  {
+			return function() 
+			{
+			  infowindow.setContent(locations[i][0]);
+			  infowindow.open(map, marker);
+			}
+		  })(marker, i));
+		}
+		
+		$('#nodeQuestionModal').on('shown.bs.modal', function () 
+		{
+			google.maps.event.trigger(map, "resize");
+		});	
+		
+				
+	}
+
+    //Add & Update Node Modal
+	$('#nodeModal').on('show.bs.modal', function (event) 
+	{
+		var button = $(event.relatedTarget) // Button that triggered the modal
+		var nodeAction = button.data('action') // Extract info from data-* attributes
+		// If necessary, an AJAX request could be initiated here (and then do the updating in a callback).
+		// Update the modal's content using jQuery here, but a data binding library or other methods can be used instead.
+		var modal = $(this)
+		
+	  
+		if(nodeAction == "add")
+		{
+			modal.find('.modal-title').text('Add Node')
+			modal.find('#frm-node-label').val('')
+			modal.find('#frm-node-info').val('')
+			modal.find('#frm-node-question-type').val(0)
+			modal.find('#frm-node-question').val('')
+			
+			modal.find('#frm-node-option-1').val("")
+			modal.find('#frm-node-option-2').val("")
+			modal.find('#frm-node-option-3').val("")
+			
+			modal.find('#frm-node-timeline-1').val("")
+			modal.find('#frm-node-timeline-2').val("")
+			modal.find('#frm-node-timeline-3').val("")
+			
+			modal.find('#frm-node-date').val("")
+			modal.find('#frm-node-timeline-date-1').val("")
+			modal.find('#frm-node-timeline-date-2').val("")
+			modal.find('#frm-node-timeline-date-3').val("")
+			
+			modal.find('#frm-node-map-1').val("")
+			modal.find('#frm-node-map-2').val("")
+			modal.find('#frm-node-map-3').val("")
+			
+			modal.find('#frm-node-latitude').val("")
+			modal.find('#frm-node-longitude').val("")
+			modal.find('#frm-node-map-latitude-1').val("")
+			modal.find('#frm-node-map-longitude-1').val("")
+			modal.find('#frm-node-map-latitude-2').val("")
+			modal.find('#frm-node-map-longitude-2').val("")
+			modal.find('#frm-node-map-latitude-3').val("")
+			modal.find('#frm-node-map-longitude-3').val("")			
+			
+			questionLabel = "";
+			nodeLabel = "";
+			questionDate = "";
+			questionLatitude = "";
+			questionLongitude = "";
+			
+			o1Novice = "";
+			o2Novice = "";
+			o3Novice = "";
+			
+			o1Expert = "";
+			o2Expert = "";
+			o3Expert = "";
+			
+			o1NoviceDate = "";
+			o2NoviceDate = "";
+			o3NoviceDate = "";	
+	
+			o1ExpertDate = "";
+			o2ExpertDate = "";
+			o3ExpertDate = "";
+			
+				
+			o1NoviceLatitude = "";
+			o1NoviceLongitude = "";
+			
+			o2NoviceLatitude = "";
+			o2NoviceLongitude = "";
+			
+			o3NoviceLatitude = "";
+			o3NoviceLongitude = "";
+				
+			o1ExpertLatitude = "";
+			o1ExpertLongitude = "";
+			
+			o2ExpertLatitude = "";
+			o2ExpertLongitude = "";
+			
+			o3ExpertLatitude = "";
+			o3ExpertLongitude = "";
+			
+			modal.find('#nodeModalAction').val('Add')
+						
+			$('#nodeModalAction').attr('onClick','addNode()')
+		  	
+		}
+		else
+		{
+			modal.find('.modal-title').text('Edit ' + nodeLabel)
+			modal.find('#frm-node-label').val(nodeLabel)
+			modal.find('#frm-node-info').val(nodeInfo)
+			modal.find('#frm-node-question-type').val(questionType)
+					
+			
+			modal.find('#nodeModalAction').val('Update')
+			
+			modal.find('#frm-node-question-answer').val(nodeLabel)
+			
+			
+			
+			if(questionSet[0] != null && questionSet[0] != undefined)
+			{
+				modal.find('#frm-node-question').val(questionLabel)
+				
+				if(questionType == 1)
+				{
+					modal.find('#frm-node-option-1').val(o1Novice)
+					modal.find('#frm-node-option-2').val(o2Novice)
+					modal.find('#frm-node-option-3').val(o3Novice)	
+					
+					modal.find('#frm-node-timeline-1').val("")
+					modal.find('#frm-node-timeline-2').val("")
+					modal.find('#frm-node-timeline-3').val("")
+					
+					modal.find('#frm-node-date').val("")
+					modal.find('#frm-node-timeline-date-1').val("")
+					modal.find('#frm-node-timeline-date-2').val("")
+					modal.find('#frm-node-timeline-date-3').val("")	
+					
+					modal.find('#frm-node-map-1').val("")
+					modal.find('#frm-node-map-2').val("")
+					modal.find('#frm-node-map-3').val("")
+					
+					modal.find('#frm-node-latitude').val("")
+					modal.find('#frm-node-longitude').val("")
+					modal.find('#frm-node-map-latitude-1').val("")
+					modal.find('#frm-node-map-longitude-1').val("")
+					modal.find('#frm-node-map-latitude-2').val("")
+					modal.find('#frm-node-map-longitude-2').val("")
+					modal.find('#frm-node-map-latitude-3').val("")
+					modal.find('#frm-node-map-longitude-3').val("")
+				}
+				else if(questionType == 2)
+				{
+					modal.find('#frm-node-option-1').val("")
+					modal.find('#frm-node-option-2').val("")
+					modal.find('#frm-node-option-3').val("")
+					
+					modal.find('#frm-node-timeline-1').val(o1Novice)
+					modal.find('#frm-node-timeline-2').val(o2Novice)
+					modal.find('#frm-node-timeline-3').val(o3Novice)
+					
+					modal.find('#frm-node-date').val(questionDate)
+					modal.find('#frm-node-timeline-date-1').val(o1NoviceDate)
+					modal.find('#frm-node-timeline-date-2').val(o2NoviceDate)
+					modal.find('#frm-node-timeline-date-3').val(o3NoviceDate)	
+					
+					modal.find('#frm-node-map-1').val("")
+					modal.find('#frm-node-map-2').val("")
+					modal.find('#frm-node-map-3').val("")
+					
+					modal.find('#frm-node-latitude').val("")
+					modal.find('#frm-node-longitude').val("")
+					modal.find('#frm-node-map-latitude-1').val("")
+					modal.find('#frm-node-map-longitude-1').val("")
+					modal.find('#frm-node-map-latitude-2').val("")
+					modal.find('#frm-node-map-longitude-2').val("")
+					modal.find('#frm-node-map-latitude-3').val("")
+					modal.find('#frm-node-map-longitude-3').val("")		
+				}
+				else if(questionType == 3)
+				{
+					modal.find('#frm-node-option-1').val("")
+					modal.find('#frm-node-option-2').val("")
+					modal.find('#frm-node-option-3').val("")
+					
+					modal.find('#frm-node-timeline-1').val("")
+					modal.find('#frm-node-timeline-2').val("")
+					modal.find('#frm-node-timeline-3').val("")
+					
+					modal.find('#frm-node-date').val("")
+					modal.find('#frm-node-timeline-date-1').val("")
+					modal.find('#frm-node-timeline-date-2').val("")
+					modal.find('#frm-node-timeline-date-3').val("")	
+					
+					modal.find('#frm-node-map-1').val(o1Novice)
+					modal.find('#frm-node-map-2').val(o2Novice)
+					modal.find('#frm-node-map-3').val(o3Novice)
+					
+					modal.find('#frm-node-latitude').val(questionLatitude)
+					modal.find('#frm-node-longitude').val(questionLongitude)
+					modal.find('#frm-node-map-latitude-1').val(o1NoviceLatitude)
+					modal.find('#frm-node-map-longitude-1').val(o1NoviceLongitude)
+					modal.find('#frm-node-map-latitude-2').val(o2NoviceLatitude)
+					modal.find('#frm-node-map-longitude-2').val(o2NoviceLongitude)
+					modal.find('#frm-node-map-latitude-3').val(o3NoviceLatitude)
+					modal.find('#frm-node-map-longitude-3').val(o3NoviceLongitude)	
+				}
+				else
+				{										
+					modal.find('#frm-node-option-1').val("")
+					modal.find('#frm-node-option-2').val("")
+					modal.find('#frm-node-option-3').val("")
+					
+					modal.find('#frm-node-timeline-1').val("")
+					modal.find('#frm-node-timeline-2').val("")
+					modal.find('#frm-node-timeline-3').val("")
+					
+					modal.find('#frm-node-date').val("")
+					modal.find('#frm-node-timeline-date-1').val("")
+					modal.find('#frm-node-timeline-date-2').val("")
+					modal.find('#frm-node-timeline-date-3').val("")
+					
+					modal.find('#frm-node-map-1').val("")
+					modal.find('#frm-node-map-2').val("")
+					modal.find('#frm-node-map-3').val("")
+					
+					modal.find('#frm-node-latitude').val("")
+					modal.find('#frm-node-longitude').val("")
+					modal.find('#frm-node-map-latitude-1').val("")
+					modal.find('#frm-node-map-longitude-1').val("")
+					modal.find('#frm-node-map-latitude-2').val("")
+					modal.find('#frm-node-map-longitude-2').val("")
+					modal.find('#frm-node-map-latitude-3').val("")
+					modal.find('#frm-node-map-longitude-3').val("")	
+				}
+				
+			
+			}			
+					
+			
+			$('#nodeModalAction').attr('onClick','updateNode()')
+		  
+		}
+		
+		displayQuestionFields();
+		
+	})	
+	
+	//Add Edge Modal	
+	$('#edgeModal').on('show.bs.modal', function (event) 
+	{
+		var button = $(event.relatedTarget) // Button that triggered the modal
+		//var nodeId = button.data('id') // Extract info from data-* attributes
+		// If necessary, an AJAX request could be initiated here (and then do the updating in a callback).
+		// Update the modal's content using jQuery here, but a data binding library or other methods can be used instead.
+		var modal = $(this)
+		modal.find('.modal-title').text('Add Edge')
+	})	
+	
+	$('#nodeQuestionModal').on('show.bs.modal', function (event) 
+	{
+		var button = $(event.relatedTarget) // Button that triggered the modal
+		//var nodeId = button.data('id') // Extract info from data-* attributes
+		// If necessary, an AJAX request could be initiated here (and then do the updating in a callback).
+		// Update the modal's content using jQuery here, but a data binding library or other methods can be used instead.
+		var modal = $(this)
+		modal.find('.modal-title').text(nodeLabel + ' Question')
+		modal.find('#frm-node-question-answer').val(nodeLabel)
+		
+		if(questionSet[0] != null && questionSet[0] != undefined)
+		{
+			modal.find('#frm-node-question').val(questionLabel)
+			
+			if(questionType == 1)
+			{
+				modal.find('#frm-node-option-1').val(o1Novice)
+				modal.find('#frm-node-option-2').val(o2Novice)
+				modal.find('#frm-node-option-3').val(o3Novice)		
+			}
+			else if(questionType == 2)
+			{
+				modal.find('#frm-node-timeline-1').val(o1Novice)
+				modal.find('#frm-node-timeline-2').val(o2Novice)
+				modal.find('#frm-node-timeline-3').val(o3Novice)
+				
+				modal.find('#frm-node-date').val(questionDate)
+				modal.find('#frm-node-timeline-date-1').val(o1NoviceDate)
+				modal.find('#frm-node-timeline-date-2').val(o2NoviceDate)
+				modal.find('#frm-node-timeline-date-3').val(o3NoviceDate)			
+			}
+			else if(questionType == 3)
+			{
+				modal.find('#frm-node-map-1').val(o1Novice)
+				modal.find('#frm-node-map-2').val(o2Novice)
+				modal.find('#frm-node-map-3').val(o3Novice)
+				
+				modal.find('#frm-node-latitude').val(questionLatitude)
+				modal.find('#frm-node-longitude').val(questionLongitude)
+				modal.find('#frm-node-map-latitude-1').val(o1NoviceLatitude)
+				modal.find('#frm-node-map-longitude-1').val(o1NoviceLongitude)
+				modal.find('#frm-node-map-latitude-2').val(o2NoviceLatitude)
+				modal.find('#frm-node-map-longitude-2').val(o2NoviceLongitude)
+				modal.find('#frm-node-map-latitude-3').val(o3NoviceLatitude)
+				modal.find('#frm-node-map-longitude-3').val(o3NoviceLongitude)	
+			}
+		
+		}
+	
+	})	
+	
+	// convenience method to stringify a JSON object
+	function toJSON(obj) 
+	{
+		return JSON.stringify(obj, null, 4);
+	}
+	
+	function addNode() 
+	{
+		//add question type
+		try 
+		{
+			//Update nodes Ids and length again
+			nodesIds = nodes.getIds();			
+			nodesLength = nodes.length;
+			//var nodeLastId = nodesIds[nodesLength-1];
+			
+			//Update questions Ids and length again
+			questionsIds = questions.getIds();			
+			questionsLength = questions.length;
+			
+			var newNodeId, newNodeLabel, newNodeinfo, newNodeQuestion;
+			
+			if(nodesLength > 0)
+				newNodeId = ++nodesIds[nodesLength-1];
+			else
+				newNodeId = 1;
+					
+			newNodeLabel = document.getElementById('frm-node-label').value;
+			newNodeinfo = document.getElementById('frm-node-info').value;
+			
+			
+			var newQuestionId, newQuestionType;
+			
+			if(questionsLength > 0)
+				newQuestionId = ++questionsIds[questionsLength-1];
+			else
+				newQuestionId = 1;
+					
+			newQuestionType = document.getElementById('frm-node-question-type').value;
+			
+			
+			questionLabel = document.getElementById('frm-node-question').value;
+			questionDate = document.getElementById('frm-node-date').value; 
+			questionLatitude = document.getElementById('frm-node-latitude').value; 
+			questionLongitude = document.getElementById('frm-node-longitude').value;
+			
+			if(newQuestionType == 1)
+			{
+				o1Novice = document.getElementById('frm-node-option-1').value;
+				o2Novice = document.getElementById('frm-node-option-2').value;
+				o3Novice = document.getElementById('frm-node-option-3').value;
+				
+				o1Expert = document.getElementById('frm-node-option-1').value;
+				o2Expert = document.getElementById('frm-node-option-2').value;
+				o3Expert = document.getElementById('frm-node-option-3').value;	
+			}
+			else if (newQuestionType == 2)
+			{
+				o1Novice = document.getElementById('frm-node-timeline-1').value;
+				o2Novice = document.getElementById('frm-node-timeline-2').value;
+				o3Novice = document.getElementById('frm-node-timeline-3').value;
+				
+				o1Expert = document.getElementById('frm-node-timeline-1').value;
+				o2Expert = document.getElementById('frm-node-timeline-2').value;
+				o3Expert = document.getElementById('frm-node-timeline-3').value;	
+			}
+			else if (newQuestionType == 3)
+			{
+				o1Novice = document.getElementById('frm-node-map-1').value;
+				o2Novice = document.getElementById('frm-node-map-2').value;
+				o3Novice = document.getElementById('frm-node-map-3').value;
+				
+				o1Expert = document.getElementById('frm-node-map-1').value;
+				o2Expert = document.getElementById('frm-node-map-2').value;
+				o3Expert = document.getElementById('frm-node-map-3').value;	
+			}
+			
+			o1NoviceDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2NoviceDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3NoviceDate = document.getElementById('frm-node-timeline-date-3').value;	
+	
+			o1ExpertDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2ExpertDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3ExpertDate = document.getElementById('frm-node-timeline-date-3').value;
+			
+				
+			o1NoviceLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1NoviceLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2NoviceLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2NoviceLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3NoviceLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3NoviceLongitude = document.getElementById('frm-node-map-longitude-3').value;		
+				
+			o1ExpertLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1ExpertLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2ExpertLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2ExpertLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3ExpertLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3ExpertLongitude = document.getElementById('frm-node-map-longitude-3').value;			
+			
+			if(newQuestionType > 0)
+				newNodeQuestion = true;
+			else
+				newNodeQuestion = false;
+			
+			nodes.add
+			({
+				id: newNodeId,
+				label: newNodeLabel,
+				info: newNodeinfo,
+				question: newNodeQuestion,
+				uri: "",
+				url: "",
+				image: "",
+				position: "",
+				shape: "box",
+				snippet: 
+				{
+					text: "",
+					image: ""
+				}
+			});
+			
+			questions.add
+			({
+				id: newQuestionId,
+				nodeId: newNodeId,
+				questionType: newQuestionType,
+				label: questionLabel,
+				start: questionDate,
+				latitude: questionLatitude,
+				longitude: questionLongitude,
+				answer: newNodeLabel,
+				answers: 
+				[
+					{
+						"targetUserType": "Novice",
+						"options":
+						[
+							{
+								"id": 1,
+								"content": o1Novice,
+								"start": o1NoviceDate,
+								"latitude": o1NoviceLatitude,
+								"longitude": o1NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 2,
+								"content": o2Novice,
+								"start": o2NoviceDate,
+								"latitude": o2NoviceLatitude,
+								"longitude": o2NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 3,
+								"content": o3Novice,
+								"start": o3NoviceDate,
+								"latitude": o3NoviceLatitude,
+								"longitude": o3NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							}
+						]
+						
+					},
+					{
+						"targetUserType": "Expert",
+						"options":
+						[
+							{
+								"id": 1,
+								"content": o1Expert,
+								"start": o1ExpertDate,
+								"latitude": o1ExpertLatitude,
+								"longitude": o1ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 2,
+								"content": o2Expert,
+								"start": o2ExpertDate,
+								"latitude": o2ExpertLatitude,
+								"longitude": o2ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 3,
+								"content": o3Expert,
+								"start": o3ExpertDate,
+								"latitude": o3ExpertLatitude,
+								"longitude": o3ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							}
+						]
+						
+					}
+				]
+			});
+			
+			
+			displayEdgeNodes();
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}		
+
+	function updateNode() 
+	{
+		try 
+		{
+			nodeLabel = document.getElementById('frm-node-label').value;
+			nodeInfo = document.getElementById('frm-node-info').value;
+			
+				
+			questionType = document.getElementById('frm-node-question-type').value;		
+			
+			if(questionType > 0)
+				nodeQuestion = true;
+			else
+				nodeQuestion= false;
+			
+			
+			questionLabel = document.getElementById('frm-node-question').value;	
+			questionDate = document.getElementById('frm-node-date').value; 
+			questionLatitude = document.getElementById('frm-node-latitude').value; 
+			questionLongitude = document.getElementById('frm-node-longitude').value;
+			
+			
+			if(questionType == 1)
+			{
+				o1Novice = document.getElementById('frm-node-option-1').value;
+				o2Novice = document.getElementById('frm-node-option-2').value;
+				o3Novice = document.getElementById('frm-node-option-3').value;
+				
+				o1Expert = document.getElementById('frm-node-option-1').value;
+				o2Expert = document.getElementById('frm-node-option-2').value;
+				o3Expert = document.getElementById('frm-node-option-3').value;	
+			}
+			else if (questionType == 2)
+			{
+				o1Novice = document.getElementById('frm-node-timeline-1').value;
+				o2Novice = document.getElementById('frm-node-timeline-2').value;
+				o3Novice = document.getElementById('frm-node-timeline-3').value;
+				
+				o1Expert = document.getElementById('frm-node-timeline-1').value;
+				o2Expert = document.getElementById('frm-node-timeline-2').value;
+				o3Expert = document.getElementById('frm-node-timeline-3').value;	
+			}
+			else if (questionType == 3)
+			{
+				o1Novice = document.getElementById('frm-node-map-1').value;
+				o2Novice = document.getElementById('frm-node-map-2').value;
+				o3Novice = document.getElementById('frm-node-map-3').value;
+				
+				o1Expert = document.getElementById('frm-node-map-1').value;
+				o2Expert = document.getElementById('frm-node-map-2').value;
+				o3Expert = document.getElementById('frm-node-map-3').value;	
+			}
+			
+			o1NoviceDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2NoviceDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3NoviceDate = document.getElementById('frm-node-timeline-date-3').value;	
+	
+			o1ExpertDate = document.getElementById('frm-node-timeline-date-1').value;
+			o2ExpertDate = document.getElementById('frm-node-timeline-date-2').value;
+			o3ExpertDate = document.getElementById('frm-node-timeline-date-3').value;
+			
+				
+			o1NoviceLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1NoviceLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2NoviceLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2NoviceLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3NoviceLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3NoviceLongitude = document.getElementById('frm-node-map-longitude-3').value;		
+				
+			o1ExpertLatitude = document.getElementById('frm-node-map-latitude-1').value;
+			o1ExpertLongitude = document.getElementById('frm-node-map-longitude-1').value;
+			
+			o2ExpertLatitude = document.getElementById('frm-node-map-latitude-2').value;
+			o2ExpertLongitude = document.getElementById('frm-node-map-longitude-2').value;
+			
+			o3ExpertLatitude = document.getElementById('frm-node-map-latitude-3').value;
+			o3ExpertLongitude = document.getElementById('frm-node-map-longitude-3').value;		
+			
+						
+			nodes.update
+			({
+				id: nodeId,
+				label: nodeLabel,
+				info: nodeInfo,
+				question: nodeQuestion
+				
+			});
+			
+			
+			questionSet = questions.get
+			({
+				filter: 
+						function (item) 
+						{
+							return item.nodeId == nodeId;
+						}
+			});
+			
+			
+			questions.update
+			({
+				id: questionSet[0].id,
+				questionType: questionType,
+				start: questionDate,
+				latitude: questionLatitude,
+				longitude: questionLongitude,
+				answer: nodeLabel,
+				answers: 
+				[
+					{
+						"targetUserType": "Novice",
+						"options":
+						[
+							{
+								"id": 1,
+								"content": o1Novice,
+								"start": o1NoviceDate,
+								"latitude": o1NoviceLatitude,
+								"longitude": o1NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 2,
+								"content": o2Novice,
+								"start": o2NoviceDate,
+								"latitude": o2NoviceLatitude,
+								"longitude": o2NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 3,
+								"content": o3Novice,
+								"start": o3NoviceDate,
+								"latitude": o3NoviceLatitude,
+								"longitude": o3NoviceLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							}
+						]
+						
+					},
+					{
+						"targetUserType": "Expert",
+						"options":
+						[
+							{
+								"id": 1,
+								"content": o1Expert,
+								"start": o1ExpertDate,
+								"latitude": o1ExpertLatitude,
+								"longitude": o1ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 2,
+								"content": o2Expert,
+								"start": o2ExpertDate,
+								"latitude": o2ExpertLatitude,
+								"longitude": o2ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							},
+							{
+								"id": 3,
+								"content": o3Expert,
+								"start": o3ExpertDate,
+								"latitude": o3ExpertLatitude,
+								"longitude": o3ExpertLongitude,
+								"image": "",
+								"snippet": 
+								{
+									"text": "",
+									"image": ""
+								}
+							}
+						]
+						
+					}
+				]
+			});
+			
+			questionLabel = questionSet[0].label;
+			
+			
+			// Note: Since the node variables where changed, to updated* then something must be changed to display node details
+			
+			displayNodeDetails();
+			displayEdgeNodes();
+			//displayQuestionDetails();
+			
+						
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}
+	
+	function removeNode() 
+	{
+		try 
+		{
+			nodes.remove({id: nodeId});
+			
+			//remove from nodesSet
+			
+			//re-display triples
+			//add a confirmation message before remove
+			
+			document.getElementById('node_label').innerHTML = '';		
+			document.getElementById('node_info').innerHTML = '';
+			
+			document.getElementById('node_edit').style.display = 'none';
+			document.getElementById('node_delete').style.display = 'none';
+			
+			//Retrieve node question
+			questionSet = questions.get
+			({
+				filter: 
+						function (item) 
+						{
+							return item.nodeId == nodeId;
+						}
+			});
+			
+			//Delete node question
+			if(questionSet[0] != null)
+				questions.remove({id: questionSet[0].id});
+						
+			
+			displayEdgeNodes();
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}
+	
+	function addEdge() 
+	{
+		try 
+		{
+			edgesIds = edges.getIds();			
+			edgesLength = edges.length;
+			
+			var newEdgeId;
+			
+			if(edgesLength > 0)
+				newEdgeId = ++edgesIds[edgesLength-1];
+			else
+				newEdgeId = 1;	
+			
+			edges.add
+			({
+				id: newEdgeId,
+				from: document.getElementById('frm-node-from').value,
+				to: document.getElementById('frm-node-to').value,
+				label: document.getElementById('frm-edge-label').value
+			});
+			
+			//Adding edge data to table 				
+			/*
+				Notes:
+				-----
+				* Make it draggable, eventhough the triple is already added to the network diagram
+				* Update triples on nodes update(on update, on delete), 
+				* Update triples on Edges update
+			*/
+			
+			var tripleNodeFromSet = nodes.get(document.getElementById('frm-node-from').value);
+			var tripleNodeToSet = nodes.get(document.getElementById('frm-node-to').value);
+			
+			var tripleNodeFromLabel = tripleNodeFromSet.label;
+			var tripleNodeToLabel = tripleNodeToSet.label;		
+			
+			tr = $('<tr id=" tbltriplesrow ' + [newEdgeId] + ' "/>');
+			tr.append('<td class="draggable">' + tripleNodeFromLabel + '</td>');
+			tr.append('<td class="draggable">' + tripleNodeToLabel + '</td>');
+			tr.append('<td class="draggable">' + document.getElementById('frm-edge-label').value + '</td>');
+			
+			$('table#tbltriples').append(tr);
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}
+	
+	function updateEdge() 
+	{
+		try 
+		{
+			edges.update
+			({
+				//replace with selected edge id, instead of reading from a text input
+				id: document.getElementById('frm-edge-id').value,
+				from: document.getElementById('frm-edge-from').value,
+				to: document.getElementById('frm-edge-to').value
+			});
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}
+	
+	function removeEdge() 
+	{
+		try 
+		{
+			//replace with selected edge id, instead of reading from a text input
+			edges.remove({id: document.getElementById('frm-edge-id').value});
+		}
+		catch (err) 
+		{
+			alert(err);
+		}
+	}
+	
+	
+	function saveKeywords()
+	{
+		var keywordsData = document.getElementById("keywords-1").value;
+		
+		/*Note: Validate comma separation*/	
+		
+		keywords = keywordsData.split(',');
+		
+	}
+	
+	//Export JSON to file	
+	function saveToJSON()
+	{
+		
+		//Update nodes data in json
+		jsonObj[0].reflectiveTopics[0].nodesData = nodes.get();
+		
+		//Update edges data in json
+		jsonObj[0].reflectiveTopics[0].edgesData = edges.get();
+		
+		//Update questions data in json
+		jsonObj[0].reflectiveTopics[0].questionsData = questions.get();
+		
+		
+		saveKeywords();
+		
+		//Update keywords data in json
+		jsonObj[0].reflectiveTopics[0].keywords = keywords;
+		
+		var updatedData;
+		
+		updatedData = new vis.DataSet();
+		
+		updatedData.add(jsonObj);
+			
+		var updatedDataJSON = JSON.stringify(updatedData.get(), null, 4);
+		
+			
+		var writeJSON = updatedDataJSON;
+		var JSONasBlob = new Blob([writeJSON], {type:'text/plain'});
+		var JSONsaveAs = "nodes.json";
+		var downloadLink = document.createElement("a");
+		downloadLink.download = JSONsaveAs;
+		downloadLink.innerHTML = "Download File";
+		if (window.webkitURL != null)
+		{
+			// Chrome allows the link to be clicked
+			// without actually adding it to the DOM.
+			downloadLink.href = window.webkitURL.createObjectURL(JSONasBlob);
+		}
+		else
+		{
+			// Firefox requires the link to be added to the DOM
+			// before it can be clicked.
+			downloadLink.href = window.URL.createObjectURL(JSONasBlob);
+			downloadLink.onclick = destroyClickedElement;
+			downloadLink.style.display = "none";
+			document.body.appendChild(downloadLink);
+		}
+
+		downloadLink.click();
+	}
+	
+	//Read from JSON file
+	function loadJSON() 
+	{
+		var input, file, fr;
+		
+		
+		input = document.getElementById('read-json');
+		
+		file = input.files[0];
+		fr = new FileReader();
+		fr.onload = function(e) 
+		{
+			var result;
+		
+			result = fr.result;
+			
+			
+			setData(result);
+			
+		};
+		fr.readAsText(file);
+	}
+	
+	//trigger upload file
+	$("#btn-load").click(function()
+	{
+		$("#read-json").click(); 
+		return false;
+	});	
+		
+</script>
